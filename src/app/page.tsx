@@ -14,27 +14,27 @@ export default function AirdropPage() {
     // Effect to disable right-click and developer shortcuts
 
    useEffect(() => {
-    const handleContextMenu = (e: MouseEvent) => e.preventDefault();
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (
-        e.code === "F12" || // F12
-        (e.ctrlKey && e.shiftKey && e.code === "KeyI") || // Ctrl+Shift+I
-        (e.ctrlKey && e.shiftKey && e.code === "KeyJ") || // Ctrl+Shift+J
-        (e.ctrlKey && e.code === "KeyU") // Ctrl+U
-      ) {
-        e.preventDefault();
-      }
+    const handleContextMenu = (event: MouseEvent) => {
+        // Add a check to ensure event is not null or undefined
+        if (event) {
+            event.preventDefault();
+        }
     };
+    const handleKeyDown = (event: KeyboardEvent) => {
+        // Add a check here as well
+        if (event) {
+            if (event.keyCode === 123 ||
+                (event.ctrlKey && event.shiftKey && event.keyCode === 73) ||
+                (event.ctrlKey && event.shiftKey && event.keyCode === 74) ||
+                (event.ctrlKey && event.keyCode === 85)) {
+                event.preventDefault();
+            }
+        }
+    }
 
-    document.addEventListener("contextmenu", handleContextMenu);
-    document.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      document.removeEventListener("contextmenu", handleContextMenu);
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, []);
+    document.addEventListener('contextmenu', handleContextMenu);
+    document.addEventListener('keydown', handleKeyDown);
+  })
 
     return (
         <>
@@ -131,10 +131,16 @@ function AirdropClaimCard() {
             <div className="mt-6">
                  <ConnectButton
                     client={client}
+
                     appMetadata={{
                       name: "Aura Protocol Airdrop",
-                      url: "https://example.com", // Replace with your website URL
+                      url: "https://example.com",
+                       // Replace with your website URL
                     }}
+                    connectModal={{
+                    showThirdwebBranding: false,
+                    size: "compact",
+                  }}
                 />
             </div>
             <p className="text-xs text-gray-500 mt-4">Connect your wallet to check eligibility and claim your $AURA tokens.</p>
