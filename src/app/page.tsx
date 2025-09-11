@@ -15,7 +15,7 @@ export default function Home() {
           <ConnectButton
             client={client}
             appMetadata={{
-              name: "Airtdrop Pro",
+              name: "Airtdrop Pro V1",
               url: "https://example.com",
             }}
           />
